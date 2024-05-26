@@ -4,18 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medieval_Clash.Lib.User
+namespace Medieval_Clash.Lib.UserStructure
 {
-    enum Difficulty
+    public class Bot : User
     {
-        Easy,
-        Normal,
-        Hard,
-    }
-    internal class Bot : User
-    {
-        
         private Difficulty _difficulty;
+        
         public Bot(string name, int rating, int healthPoints, int manaPoints, int money, Difficulty difficulty) : base(name, rating, healthPoints, manaPoints, money)
         {
             _difficulty = difficulty;
