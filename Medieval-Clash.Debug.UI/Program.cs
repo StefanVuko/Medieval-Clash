@@ -1,24 +1,11 @@
 ﻿using Medieval_Clash.Lib;
+using Medieval_Clash.Lib.UserStructure;
 
-Card card = new Card("Placeholder", "Att1", 20, TypeOfCard.Attack, 50, 0, 0);
 
-Card card2 = new Card("Placeholder", "Def1", 50, TypeOfCard.Defense, 0, 20, 0);
+Player p1 = new Player("stixy",2000,40,20,40,String.Empty);
+Bot b1 = new Bot("minz",1999,40,20,40,Difficulty.Normal);
 
-Card card3 = new Card("Placeholder", "Spe1", 20, TypeOfCard.Special, 0, 0, 20);
+Game _game = new Game("Game 1", p1, b1);
 
-List<Card> deck = new List<Card>();
-deck.Add(card);
-deck.Add(card2);
-deck.Add(card3);
+_game.PlayGame();
 
-GameDeck gameDeck = new GameDeck(deck);
-Console.WriteLine("Normal Gamedeck");
-Console.WriteLine(gameDeck.ToString());
-Console.WriteLine("-----------------------");
-gameDeck.Shuffle();
-
-Console.WriteLine("After Shuffle");
-Console.WriteLine(gameDeck.ToString());
-Console.WriteLine("-----------------------");
-Console.WriteLine("Drawing a card, card on top of the deck");
-Console.WriteLine(gameDeck.DrawCard());
