@@ -50,11 +50,24 @@ namespace Medieval_Clash.Lib
                 printUserCards(_player);
                 Console.WriteLine("----------------");
 
-                Console.WriteLine("Pick your Card: ");
+                Console.WriteLine("Pick your Card or `skip´: ");
                 string input = Console.ReadLine(); // edit input so you only place attack or special, if placing defense say something like "try again" and let player pick new card
-                Console.WriteLine("Your Card is:\n" + _player.UserDeck[Convert.ToInt32(input)].ToString());
-
-                PlaceCard(_player, _player.UserDeck[Convert.ToInt32(input)]);
+               
+                if (input == "skip" && !_player.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Attack))
+                {
+                    PlaceCard(_player, SkipAttack());
+                }  else if (input == "skip" && _player.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Attack))
+                {
+                    Console.WriteLine("You cannot skip this turn, you have suitable cards. Try again:");
+                    input = Console.ReadLine();
+                }
+                else
+                {
+                    Console.WriteLine("Your Card is:\n" + _player.UserDeck[Convert.ToInt32(input)].ToString());
+                    PlaceCard(_player, _player.UserDeck[Convert.ToInt32(input)]);
+                }
+                
+                
                 Console.ForegroundColor = ConsoleColor.Green ;
                 printPlacedView();
 
@@ -77,7 +90,7 @@ namespace Medieval_Clash.Lib
                 Console.WriteLine("Player Cards: \n");
                 printUserCards(_player);
                 Console.WriteLine("----------------");
-                Console.WriteLine("Pick your Defense Card: ");
+                Console.WriteLine("Pick your Defense Card or `skip´: ");
                 string defenseInput = Console.ReadLine();
                 PlaceCounter(_player, _player.UserDeck[Convert.ToInt32(defenseInput)]);
                 printUserStats(_player); //TODO: if health < 0, write 0 as health instead of negative numbers
@@ -153,8 +166,9 @@ namespace Medieval_Clash.Lib
             {
                 user.Money = 0;
             }
+
             Console.WriteLine();
-            Console.WriteLine(user.Name + "Current Stats are:");
+            Console.WriteLine(user.Name + " current stats are:");
             Console.WriteLine("HP: " + user.HealthPoints);
             Console.WriteLine("MP: " + user.ManaPoints);
             Console.WriteLine("Money: " + user.Money) ;
@@ -224,6 +238,17 @@ namespace Medieval_Clash.Lib
             user.UserDeck.Remove(card);
         }
 
+        public Card SkipAttack()
+        {
+            Card skipCard = new Card("Placeholder", "Skip", 0, TypeOfCard.Attack, 0, 0, 0);
+
+            return skipCard;
+        }
+
+        public void SkipDefense(User user, Card card)
+        {
+
+        }
         private List<Card> assignCards()
         {
             List<Card> deck = new List<Card>
