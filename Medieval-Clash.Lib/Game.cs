@@ -132,12 +132,28 @@ namespace Medieval_Clash.Lib
         public Card getBotCard(User user, TypeOfCard typeOfCard)
         {
             Card pickedCard;
+            if (typeOfCard.Equals(TypeOfCard.Attack) && !user.UserDeck.Any(c => c.TypeOfCard == typeOfCard) 
+                && !user.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Sell) 
+                && !user.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Special) 
+                && !user.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Buy))
+            {
+                Console.WriteLine("Manu skipped Attack");
+                pickedCard = SkipAttack();
+                return pickedCard;
+            }
+            if (typeOfCard.Equals(TypeOfCard.Defense) && !user.UserDeck.Any(c => c.TypeOfCard == typeOfCard))
+            {
+                Console.WriteLine("Manu mein decko skipped defense");
+                pickedCard = SkipAttack();
+                return pickedCard;
+            }
             if (typeOfCard.Equals(TypeOfCard.Attack))
             {
                 pickedCard = user.UserDeck.Where(item => item.TypeOfCard.Equals(TypeOfCard.Attack) || item.TypeOfCard.Equals(TypeOfCard.Special)).First();
                 Console.WriteLine(pickedCard);
                 return pickedCard;
             }
+            
             // check if bot has this typeOfCard in Deck!!! -> !NullPointerException
             // boolean as skip to not play turn and draw a card
             pickedCard = user.UserDeck.Where(item => item.TypeOfCard.Equals(typeOfCard)).First();
@@ -261,11 +277,14 @@ namespace Medieval_Clash.Lib
             _placedCard = null;
             _placedCardUser = null;
         }
+
+
+
         private List<Card> assignCards()
         {
             List<Card> deck = new List<Card>
             {
-                new Card("Placeholder", "Att1", 3, TypeOfCard.Attack, 5, 0, 0),
+               /* new Card("Placeholder", "Att1", 3, TypeOfCard.Attack, 5, 0, 0),
                 new Card("Placeholder", "Att2", 7, TypeOfCard.Attack, 10, 0, 0),
                 new Card("Placeholder", "Att3", 11, TypeOfCard.Attack, 15, 0, 0),
                 new Card("Placeholder", "Att4", 6, TypeOfCard.Attack, 3, 0, 0),
@@ -278,7 +297,7 @@ namespace Medieval_Clash.Lib
                 new Card("Placeholder", "Att11", 15, TypeOfCard.Attack, 13, 0, 0),
                 new Card("Placeholder", "Att12", 5, TypeOfCard.Attack, 15, 0, 0),
                 new Card("Placeholder", "Att13", 12, TypeOfCard.Attack, 11, 0, 0),
-                new Card("Placeholder", "Att14", 30, TypeOfCard.Attack, 30, 0, 0), // Rare card
+                new Card("Placeholder", "Att14", 30, TypeOfCard.Attack, 30, 0, 0),*/ // Rare card
                 new Card("Placeholder", "Def1", 2, TypeOfCard.Defense, 0, 3, 0),
                 new Card("Placeholder", "Def2", 8, TypeOfCard.Defense, 0, 7, 0),
                 new Card("Placeholder", "Def3", 14, TypeOfCard.Defense, 0, 11, 0),
@@ -293,14 +312,14 @@ namespace Medieval_Clash.Lib
                 new Card("Placeholder", "Def12", 4, TypeOfCard.Defense, 0, 5, 0),
                 new Card("Placeholder", "Def13", 15, TypeOfCard.Defense, 0, 15, 0),
                 new Card("Placeholder", "Def14", 30, TypeOfCard.Defense, 0, 30, 0), // Rare card
-                new Card("Placeholder", "MP15", 20, TypeOfCard.Special, 0, 0, 0),
+               /* new Card("Placeholder", "MP15", 20, TypeOfCard.Special, 0, 0, 0),
                 new Card("Placeholder", "MP10", 20, TypeOfCard.Special, 0, 0, 0),
                 new Card("Placeholder", "MP20", 20, TypeOfCard.Special, 0, 0, 0),
                 new Card("Placeholder", "HP10", 20, TypeOfCard.Special, 0, 0, 0),
                 new Card("Placeholder", "HP15", 20, TypeOfCard.Special, 0, 0, 0),
                 new Card("Placeholder", "HP20", 20, TypeOfCard.Special, 0, 0, 0),
                 new Card("Placeholder", "GP10", 20, TypeOfCard.Special, 0, 0, 0),
-                new Card("Placeholder", "GP30", 20, TypeOfCard.Special, 0, 0, 0)
+                new Card("Placeholder", "GP30", 20, TypeOfCard.Special, 0, 0, 0)*/
             };
 
             return deck;
