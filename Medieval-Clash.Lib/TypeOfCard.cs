@@ -4,6 +4,9 @@
     {
         Attack, 
         Defense,
-        Special
+        Special,
+        Skip,
+        Buy,
+        Sell
     }
 }

@@ -56,12 +56,16 @@ namespace Medieval_Clash.Lib
                 if (input == "skip" && !_player.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Attack))
                 {
                     PlaceCard(_player, SkipAttack());
-                }  else if (input == "skip" && _player.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Attack))
+                }  
+                if (input == "skip" && _player.UserDeck.Any(c => c.TypeOfCard == TypeOfCard.Attack))
                 {
-                    Console.WriteLine("You cannot skip this turn, you have suitable cards. Try again:");
-                    input = Console.ReadLine();
+                    while(input == "skip")
+                    {
+                        Console.WriteLine("You cannot skip this turn, you have suitable cards. Try again:");
+                        input = Console.ReadLine();
+                    }
                 }
-                else
+                if (input != "skip")
                 {
                     Console.WriteLine("Your Card is:\n" + _player.UserDeck[Convert.ToInt32(input)].ToString());
                     PlaceCard(_player, _player.UserDeck[Convert.ToInt32(input)]);
@@ -73,7 +77,7 @@ namespace Medieval_Clash.Lib
 
                 Console.ForegroundColor = ConsoleColor.White;
                 PlaceCounter(_bot, getBotCard(_bot, TypeOfCard.Defense));
-                printUserStats(_bot); //TODO: if health < 0, write 0 as health instead of negative numbers
+                printUserStats(_bot); 
 
                 if (checkIfWon(_player, _bot))
                 {
@@ -92,8 +96,14 @@ namespace Medieval_Clash.Lib
                 Console.WriteLine("----------------");
                 Console.WriteLine("Pick your Defense Card or `skip´: ");
                 string defenseInput = Console.ReadLine();
-                PlaceCounter(_player, _player.UserDeck[Convert.ToInt32(defenseInput)]);
-                printUserStats(_player); //TODO: if health < 0, write 0 as health instead of negative numbers
+                if (defenseInput == "skip")
+                {
+                    SkipDefense(_player);
+                } else
+                {
+                    PlaceCounter(_player, _player.UserDeck[Convert.ToInt32(defenseInput)]);
+                }
+                printUserStats(_player); 
 
                 _player.UserDeck.Add(_deck.DrawCard());
                 _bot.UserDeck.Add(_deck.DrawCard());
@@ -240,14 +250,16 @@ namespace Medieval_Clash.Lib
 
         public Card SkipAttack()
         {
-            Card skipCard = new Card("Placeholder", "Skip", 0, TypeOfCard.Attack, 0, 0, 0);
+            Card skipCard = new Card("Placeholder", "Skip", 0, TypeOfCard.Skip, 0, 0, 0);
 
             return skipCard;
         }
 
-        public void SkipDefense(User user, Card card)
+        public void SkipDefense(User user)
         {
-
+            user.HealthPoints -= _placedCard.Damage;
+            _placedCard = null;
+            _placedCardUser = null;
         }
         private List<Card> assignCards()
         {
