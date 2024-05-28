@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
@@ -44,21 +45,22 @@ namespace Medieval_Clash.Lib
    
             while (!_finished)
             {
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("Player Cards: \n");
                 printUserCards(_player);
                 Console.WriteLine("----------------");
-                Console.WriteLine("\nBot Cards: ");
-                printUserCards(_bot);
 
                 Console.WriteLine("Pick your Card: ");
-                string input = Console.ReadLine();
+                string input = Console.ReadLine(); // edit input so you only place attack or special, if placing defense say something like "try again" and let player pick new card
                 Console.WriteLine("Your Card is:\n" + _player.UserDeck[Convert.ToInt32(input)].ToString());
 
                 PlaceCard(_player, _player.UserDeck[Convert.ToInt32(input)]);
+                Console.ForegroundColor = ConsoleColor.Green ;
                 printPlacedView();
 
+                Console.ForegroundColor = ConsoleColor.White;
                 PlaceCounter(_bot, getBotCard(_bot, TypeOfCard.Defense));
-                Console.WriteLine("Bot Health: "+_bot.HealthPoints); //TODO: if health < 0, write 0 as health instead of negative numbers
+                Console.WriteLine("\n"+_bot.ToString()); //TODO: if health < 0, write 0 as health instead of negative numbers
 
                 if(checkIfWon(_player, _bot))
                 {
@@ -71,13 +73,14 @@ namespace Medieval_Clash.Lib
                 PlaceCard(_bot,getBotCard(_bot, TypeOfCard.Attack));
                 printPlacedView();
 
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Player Cards: \n");
                 printUserCards(_player);
                 Console.WriteLine("----------------");
                 Console.WriteLine("Pick your Defense Card: ");
                 string defenseInput = Console.ReadLine();
                 PlaceCounter(_player, _player.UserDeck[Convert.ToInt32(defenseInput)]);
-                Console.WriteLine("Your Health is: " + _player.HealthPoints);
+                Console.WriteLine("\n"+_player.ToString()); //TODO: if health < 0, write 0 as health instead of negative numbers
 
                 _player.UserDeck.Add(_deck.DrawCard());
                 _bot.UserDeck.Add(_deck.DrawCard());
@@ -105,8 +108,16 @@ namespace Medieval_Clash.Lib
 
         public Card getBotCard(User user, TypeOfCard typeOfCard)
         {
+            Card pickedCard;
+            if (typeOfCard.Equals(TypeOfCard.Attack))
+            {
+                pickedCard = user.UserDeck.Where(item => item.TypeOfCard.Equals(TypeOfCard.Attack) || item.TypeOfCard.Equals(TypeOfCard.Special)).First();
+                Console.WriteLine(pickedCard);
+                return pickedCard;
+            }
             // check if bot has this typeOfCard in Deck!!! -> !NullPointerException
-            Card pickedCard = user.UserDeck.Where(item => item.TypeOfCard.Equals(typeOfCard)).First();
+            // boolean as skip to not play turn and draw a card
+            pickedCard = user.UserDeck.Where(item => item.TypeOfCard.Equals(typeOfCard)).First();
             Console.WriteLine(pickedCard);
             return pickedCard;
         }
@@ -123,8 +134,12 @@ namespace Medieval_Clash.Lib
 
         public void printPlacedView()
         {
+            Console.WriteLine();
+            Console.WriteLine("----- The Current Turn Stack ----");
             Console.WriteLine(_placedCard.ToString());
             Console.WriteLine(_placedCardUser.ToString());
+            Console.WriteLine("---- End Of Current Turn Stack ----");
+            Console.WriteLine();
         }
 
 
@@ -133,7 +148,8 @@ namespace Medieval_Clash.Lib
 
         }
 
-        public void PlaceCard(User user, Card card) {
+        public void PlaceCard(User user, Card card)
+        {
             //TODO in input das man nur attack oder special setzen kann
             user.UserDeck.Remove(card);
 
@@ -142,7 +158,34 @@ namespace Medieval_Clash.Lib
                 _placedCard = card;
                 _placedCardUser = user;
             }
+            
+
+            if (card.TypeOfCard.Equals(TypeOfCard.Special))
+            {
+                Match match = Regex.Match(card.Name, @"(\D+)(\d+)");
+
+                string prefix = match.Groups[1].Value;
+                int number = int.Parse(match.Groups[2].Value);
+
+                // SELL and BUY needs to be added
+                if (prefix == "HP")
+                {
+                    user.HealthPoints += number;
+                }
+                if (prefix == "MP")
+                {
+                    user.ManaPoints += number;
+                }
+                if (prefix == "GP")
+                {
+                    user.Money += number;
+                }
+
+                _placedCard = card;
+                _placedCardUser = user;
+            }
         }
+
 
         public void PlaceCounter(User user, Card card)
         {
@@ -167,38 +210,42 @@ namespace Medieval_Clash.Lib
         {
             List<Card> deck = new List<Card>
             {
-                new Card("Placeholder", "Att1", 20, TypeOfCard.Attack, 50, 0, 0),
-                new Card("Placeholder", "Att2", 50, TypeOfCard.Attack, 40, 0, 0),
-                new Card("Placeholder", "Att3", 20, TypeOfCard.Attack, 30, 0, 0),
-                new Card("Placeholder", "Def1", 20, TypeOfCard.Defense, 0, 10, 0),
-                new Card("Placeholder", "Def2", 20, TypeOfCard.Defense, 0, 20, 0),
-                new Card("Placeholder", "Def3", 20, TypeOfCard.Defense, 0, 30, 0),
-                new Card("Placeholder", "Att4", 20, TypeOfCard.Attack, 60, 0, 0),
-                new Card("Placeholder", "Att5", 50, TypeOfCard.Attack, 90, 0, 0),
-                new Card("Placeholder", "Att6", 20, TypeOfCard.Attack, 100, 0, 0),
-                new Card("Placeholder", "Def4", 20, TypeOfCard.Defense, 0, 110, 0),
-                new Card("Placeholder", "Def5", 20, TypeOfCard.Defense, 0, 140, 0),
-                new Card("Placeholder", "Def6", 20, TypeOfCard.Defense, 0, 25, 0),
-                new Card("Placeholder", "Att7", 20, TypeOfCard.Attack, 50, 0, 0),
-                new Card("Placeholder", "Att8", 50, TypeOfCard.Attack, 40, 0, 0),
-                new Card("Placeholder", "Att9", 20, TypeOfCard.Attack, 30, 0, 0),
-                new Card("Placeholder", "Def7", 20, TypeOfCard.Defense, 0, 10, 0),
-                new Card("Placeholder", "Def8", 20, TypeOfCard.Defense, 0, 20, 0),
-                new Card("Placeholder", "Def9", 20, TypeOfCard.Defense, 0, 30, 0),
-                new Card("Placeholder", "Att10", 20, TypeOfCard.Attack, 60, 0, 0),
-                new Card("Placeholder", "Att11", 50, TypeOfCard.Attack, 90, 0, 0),
-                new Card("Placeholder", "Att12", 20, TypeOfCard.Attack, 100, 0, 0),
-                new Card("Placeholder", "Def10", 20, TypeOfCard.Defense, 0, 110, 0),
-                new Card("Placeholder", "Def11", 20, TypeOfCard.Defense, 0, 140, 0),
-                new Card("Placeholder", "Def12", 20, TypeOfCard.Defense, 0, 25, 0)/*,
-                new Card("Placeholder", "Spe5", 20, TypeOfCard.Special, 0, 0, 20),
-                new Card("Placeholder", "Spe6", 20, TypeOfCard.Special, 0, 0, 20),
-                new Card("Placeholder", "Spe7", 20, TypeOfCard.Special, 0, 0, 20),
-                new Card("Placeholder", "Spe8", 20, TypeOfCard.Special, 0, 0, 20),
-                new Card("Placeholder", "Spe1", 20, TypeOfCard.Special, 0, 0, 20),
-                new Card("Placeholder", "Spe2", 20, TypeOfCard.Special, 0, 0, 20),
-                new Card("Placeholder", "Spe3", 20, TypeOfCard.Special, 0, 0, 20),
-                new Card("Placeholder", "Spe4", 20, TypeOfCard.Special, 0, 0, 20)*/
+                new Card("Placeholder", "Att1", 3, TypeOfCard.Attack, 5, 0, 0),
+                new Card("Placeholder", "Att2", 7, TypeOfCard.Attack, 10, 0, 0),
+                new Card("Placeholder", "Att3", 11, TypeOfCard.Attack, 15, 0, 0),
+                new Card("Placeholder", "Att4", 6, TypeOfCard.Attack, 3, 0, 0),
+                new Card("Placeholder", "Att5", 8, TypeOfCard.Attack, 7, 0, 0),
+                new Card("Placeholder", "Att6", 13, TypeOfCard.Attack, 12, 0, 0),
+                new Card("Placeholder", "Att7", 10, TypeOfCard.Attack, 9, 0, 0),
+                new Card("Placeholder", "Att8", 4, TypeOfCard.Attack, 5, 0, 0),
+                new Card("Placeholder", "Att9", 14, TypeOfCard.Attack, 2, 0, 0),
+                new Card("Placeholder", "Att10", 9, TypeOfCard.Attack, 7, 0, 0),
+                new Card("Placeholder", "Att11", 15, TypeOfCard.Attack, 13, 0, 0),
+                new Card("Placeholder", "Att12", 5, TypeOfCard.Attack, 15, 0, 0),
+                new Card("Placeholder", "Att13", 12, TypeOfCard.Attack, 11, 0, 0),
+                new Card("Placeholder", "Att14", 30, TypeOfCard.Attack, 30, 0, 0), // Rare card
+                new Card("Placeholder", "Def1", 2, TypeOfCard.Defense, 0, 3, 0),
+                new Card("Placeholder", "Def2", 8, TypeOfCard.Defense, 0, 7, 0),
+                new Card("Placeholder", "Def3", 14, TypeOfCard.Defense, 0, 11, 0),
+                new Card("Placeholder", "Def4", 7, TypeOfCard.Defense, 0, 4, 0),
+                new Card("Placeholder", "Def5", 9, TypeOfCard.Defense, 0, 8, 0),
+                new Card("Placeholder", "Def6", 13, TypeOfCard.Defense, 0, 9, 0),
+                new Card("Placeholder", "Def7", 12, TypeOfCard.Defense, 0, 15, 0),
+                new Card("Placeholder", "Def8", 3, TypeOfCard.Defense, 0, 2, 0),
+                new Card("Placeholder", "Def9", 11, TypeOfCard.Defense, 0, 14, 0),
+                new Card("Placeholder", "Def10", 10, TypeOfCard.Defense, 0, 12, 0),
+                new Card("Placeholder", "Def11", 15, TypeOfCard.Defense, 0, 13, 0),
+                new Card("Placeholder", "Def12", 4, TypeOfCard.Defense, 0, 5, 0),
+                new Card("Placeholder", "Def13", 15, TypeOfCard.Defense, 0, 15, 0),
+                new Card("Placeholder", "Def14", 30, TypeOfCard.Defense, 0, 30, 0), // Rare card
+                new Card("Placeholder", "MP15", 20, TypeOfCard.Special, 0, 0, 0),
+                new Card("Placeholder", "MP10", 20, TypeOfCard.Special, 0, 0, 0),
+                new Card("Placeholder", "MP20", 20, TypeOfCard.Special, 0, 0, 0),
+                new Card("Placeholder", "HP10", 20, TypeOfCard.Special, 0, 0, 0),
+                new Card("Placeholder", "HP15", 20, TypeOfCard.Special, 0, 0, 0),
+                new Card("Placeholder", "HP20", 20, TypeOfCard.Special, 0, 0, 0),
+                new Card("Placeholder", "GP10", 20, TypeOfCard.Special, 0, 0, 0),
+                new Card("Placeholder", "GP30", 20, TypeOfCard.Special, 0, 0, 0)
             };
 
             return deck;

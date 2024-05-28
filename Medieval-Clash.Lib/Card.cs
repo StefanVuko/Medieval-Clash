@@ -14,9 +14,9 @@ namespace Medieval_Clash.Lib
         private TypeOfCard _typeOfCard;
         private int _damage;
         private int _defense;
-        private int _manaPoints;
+        private int _manaCost;
 
-        public Card(string imageFileName, string name, int price, TypeOfCard typeOfCard, int damage, int defense, int manaPoints)
+        public Card(string imageFileName, string name, int price, TypeOfCard typeOfCard, int damage, int defense, int manaCost)
         {
             _imageFileName = imageFileName;
             _name = name;
@@ -24,7 +24,7 @@ namespace Medieval_Clash.Lib
             _typeOfCard = typeOfCard;
             _damage = damage;
             _defense = defense;
-            _manaPoints = manaPoints;
+            _manaCost = manaCost;
         }
 
         public string ImageFileName { get => _imageFileName; set => _imageFileName = value; }
@@ -33,11 +33,11 @@ namespace Medieval_Clash.Lib
         public TypeOfCard TypeOfCard { get => _typeOfCard; set => _typeOfCard = value; }
         public int Damage { get => _damage; set => _damage = value; }
         public int Defense { get => _defense; set => _defense = value; }
-        public int ManaPoints { get => _manaPoints; set => _manaPoints = value; }
+        public int ManaCost { get => _manaCost; set => _manaCost = value; }
 
         public override string ToString()
         {
-            return "Name: " + _name + "\nPrice: " + _price + "\nType of Card: " + _typeOfCard.ToString() + "\nDamage: " + _damage + "\nDefense: " + _defense + "\nMana Points: " + _manaPoints + "\n";
+            return "Name: " + _name + "\nPrice: " + _price + "\nType of Card: " + _typeOfCard.ToString() + "\nDamage: " + _damage + "\nDefense: " + _defense + "\nMana Costs: " + _manaCost + "\n";
         }
     }
 }

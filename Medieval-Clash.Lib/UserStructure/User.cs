@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Medieval_Clash.Lib.UserStructure
 {
@@ -25,6 +26,10 @@ namespace Medieval_Clash.Lib.UserStructure
             UserDeck = new List<Card>();
        }
 
+        public override string ToString()
+        {
+            return "Name: " + Name + "\nRating: " + Rating + "\nHealth Points: " + HealthPoints + "\nMana Points: " + ManaPoints + "\nMoney: " + Money;
+        }
 
     }
     //ToDo: fragen wegen userinfo, was wollen wir da exactly?
