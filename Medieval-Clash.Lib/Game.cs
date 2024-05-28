@@ -60,9 +60,9 @@ namespace Medieval_Clash.Lib
 
                 Console.ForegroundColor = ConsoleColor.White;
                 PlaceCounter(_bot, getBotCard(_bot, TypeOfCard.Defense));
-                Console.WriteLine("\n"+_bot.ToString()); //TODO: if health < 0, write 0 as health instead of negative numbers
+                printUserStats(_bot); //TODO: if health < 0, write 0 as health instead of negative numbers
 
-                if(checkIfWon(_player, _bot))
+                if (checkIfWon(_player, _bot))
                 {
                     break;
                 }
@@ -80,7 +80,7 @@ namespace Medieval_Clash.Lib
                 Console.WriteLine("Pick your Defense Card: ");
                 string defenseInput = Console.ReadLine();
                 PlaceCounter(_player, _player.UserDeck[Convert.ToInt32(defenseInput)]);
-                Console.WriteLine("\n"+_player.ToString()); //TODO: if health < 0, write 0 as health instead of negative numbers
+                printUserStats(_player); //TODO: if health < 0, write 0 as health instead of negative numbers
 
                 _player.UserDeck.Add(_deck.DrawCard());
                 _bot.UserDeck.Add(_deck.DrawCard());
@@ -137,11 +137,29 @@ namespace Medieval_Clash.Lib
             Console.WriteLine();
             Console.WriteLine("----- The Current Turn Stack ----");
             Console.WriteLine(_placedCard.ToString());
-            Console.WriteLine(_placedCardUser.ToString());
+            printUserStats(_placedCardUser);
             Console.WriteLine("---- End Of Current Turn Stack ----");
             Console.WriteLine();
         }
 
+        public void printUserStats(User user)
+        {   
+            if (user.HealthPoints < 0  )
+            {
+                user.HealthPoints = 0;
+            } else if (user.ManaPoints < 0) {
+                user.ManaPoints = 0;
+            } else if (user.Money < 0)
+            {
+                user.Money = 0;
+            }
+            Console.WriteLine();
+            Console.WriteLine(user.Name + "Current Stats are:");
+            Console.WriteLine("HP: " + user.HealthPoints);
+            Console.WriteLine("MP: " + user.ManaPoints);
+            Console.WriteLine("Money: " + user.Money) ;
+            Console.WriteLine();
+        }
 
         public void LeaveGame()
         {
